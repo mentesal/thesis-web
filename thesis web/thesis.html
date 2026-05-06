@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shelter Design Response</title>
+    <style>
+        /* Modern UI Styling */
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-image: url('bamboo-background.jpg');
+            background-color: #f0f2f5;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            color: #1a202c;
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #e53e3e;
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background-color: #e53e3e;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #c53030;
+        }
+
+        #result {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #fff5f5;
+            border: 1px solid #fde2e2;
+            border-left: 5px solid #e53e3e;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #2d3748;
+            line-height: 1.6;
+            display: none; /* Hidden until submission */
+        }
+
+        .design-image {
+            width: 100%;
+            max-width: 420px;
+            margin-top: 18px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            object-fit: cover;
+            display: block;
+        }
+
+        .result-header {
+            font-weight: bold;
+            color: #c53030;
+            margin-bottom: 8px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Modular Bamboo Housing Design Parameters</h2>
+
+    <div class="input-group">
+        <label>🌡️ Temperature (°C)</label>
+        <input type="number" id="tempInput" placeholder="e.g., 20">
+    </div>
+
+    <div class="input-group">
+        <label>🌧️ Average Rainfall (mm)</label>
+        <input type="number" id="rainfallInput" placeholder="e.g., 150">
+    </div>
+
+    <div class="input-group">
+        <label>🌬️ Wind Speed (km/h)</label>
+        <input type="number" id="windInput" placeholder="e.g., 25">
+    </div>
+
+    <div class="input-group">
+        <label>👥 Refugee Count</label>
+        <input type="number" id="refugeeInput" placeholder="e.g., 100">
+    </div>
+
+    <button onclick="designResponse()">Generate Design</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+function designResponse() {
+    let temp = parseFloat(document.getElementById("tempInput").value);
+    let rainfall = parseFloat(document.getElementById("rainfallInput").value);
+    let windSpeed = parseFloat(document.getElementById("windInput").value);
+    let refugeeCount = parseInt(document.getElementById("refugeeInput").value, 10);
+    
+    let result = {};
+    let resultDiv = document.getElementById("result");
+    // Check for empty inputs
+    if (isNaN(temp) || isNaN(rainfall) || isNaN(windSpeed) || isNaN(refugeeCount)) {
+        resultDiv.style.display = "block";
+        resultDiv.innerHTML = "<span style='color: #c53030;'>Please fill in all fields.</span>";
+        return;
+    }
+
+    // Spacing and roof material based on temperature
+    if (temp >= 16 && temp <= 20) {
+        result.spacing = "1.5m";
+        result.roof_material = "corrugated iron sheet and bamboo ceiling";
+    } else if (temp > 20) {
+        result.spacing = "1.7m";
+        result.roof_material = "plastic";
+    } else {
+        result.spacing = "1.3m";
+        result.roof_material = "corrugated iron sheet and bamboo ceiling";
+    }
+
+    // Roof height and foundation depth based on rainfall
+    if (rainfall >= 150) {
+        result.roof_height = "> 1.5m";
+        result.foundation_depth = ">= 0.6m";
+    } else {
+        result.roof_height = "1m";
+        result.foundation_depth = ">= 0.3m";
+    }
+
+    // Building type based on temperature and rainfall
+    if (temp > 20 && rainfall >= 150) {
+        result.building_type = "G+0";
+    } else {
+        result.building_type = "G+1";
+    }
+
+    let modules = Math.ceil(refugeeCount / 5);
+    let cost = modules * 6000;
+
+    // Build a simple key for the image map
+    let tempKey = temp < 16 ? "low" : temp <= 20 ? "medium" : "high";
+    let rainKey = rainfall < 150 ? "low" : "high";
+    let windKey = windSpeed > 20 ? "high" : "low";
+    let designKey = `${tempKey}_${rainKey}_${windKey}`;
+
+    const imageMap = {
+        "low_low_low": "images/design_1.jpg",
+        "low_low_high": "images/design_2.jpg",
+        "low_high_low": "images/design_3.jpg",
+        "low_high_high": "images/design_4.jpg",
+        "medium_low_low": "images/design_5.jpg",
+        "medium_low_high": "images/design_6.jpg",
+        "medium_high_low": "images/design_7.jpg",
+        "medium_high_high": "images/design_8.jpg",
+        "high_low_low": "images/design_9.jpg",
+        "high_low_high": "images/design_10.jpg",
+        "high_high_low": "images/design_11.jpg",
+        "high_high_high": "images/design_12.jpg"
+    };
+
+    let imageSrc = imageMap[designKey] || "images/default-design.jpg";
+
+    // Update UI
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = `
+        <span class="result-header">Design Specifications:</span>
+        &bull; <b>Building Type:</b> ${result.building_type}<br>
+        &bull; <b>Module Spacing:</b> ${result.spacing}<br>
+        &bull; <b>Roof Material:</b> ${result.roof_material}<br>
+        &bull; <b>Roof Height:</b> ${result.roof_height}<br>
+        &bull; <b>Wall Material:</b> ${result.wall_material}<br>
+        &bull; <b>Foundation:</b> ${result.foundation}<br>
+        &bull; <b>Foundation Depth:</b> ${result.foundation_depth}<br><br>
+        <b>Housing modules needed:</b> ${modules} 
+        <small>(25 m² per module, 5 persons per module)</small><br>
+        <b>Total Cost:</b> ${cost} ETB
+        <img src="${imageSrc}" alt="Design image" class="design-image">
+    `;
+}
+</script>
+
+</body>
+</html>
